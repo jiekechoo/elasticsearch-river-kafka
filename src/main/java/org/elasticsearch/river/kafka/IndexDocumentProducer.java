@@ -15,15 +15,15 @@
  */
 package org.elasticsearch.river.kafka;
 
-import kafka.message.MessageAndMetadata;
+import java.sql.Timestamp;
+import java.util.Map;
+
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import kafka.message.MessageAndMetadata;
 
 /**
  * Producer to index documents. Creates index document requests, which are executed with Bulk API.
@@ -56,8 +56,10 @@ public class IndexDocumentProducer extends ElasticSearchProducer {
 
             switch (riverConfig.getMessageType()) {
                 case STRING:
+                	Timestamp ts = new Timestamp(System.currentTimeMillis());  
                     message = XContentFactory.jsonBuilder()
                             .startObject()
+                            .field("@timestamp", ts)
                             .field("value", new String(messageBytes, "UTF-8"))
                             .endObject()
                             .string();
