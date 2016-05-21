@@ -15,12 +15,14 @@
  */
 package org.elasticsearch.river.kafka;
 
+import java.util.Date;
+import java.util.Map;
+
+import org.apache.commons.lang.time.FastDateFormat;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.support.XContentMapValues;
 import org.elasticsearch.river.RiverName;
 import org.elasticsearch.river.RiverSettings;
-
-import java.util.Map;
 
 /**
  * The configuration properties that the client will provide while creating a river in elastic search.
@@ -90,7 +92,10 @@ public class RiverConfig {
         // Extract ElasticSearch related configuration
         if (riverSettings.settings().containsKey("index")) {
             Map<String, Object> indexSettings = (Map<String, Object>) riverSettings.settings().get("index");
-            indexName = XContentMapValues.nodeStringValue(indexSettings.get(INDEX_NAME), riverName.name());
+            Date date = new Date();
+            FastDateFormat fdf = FastDateFormat.getInstance("yyyy.MM.dd");
+            String customDateTime = fdf.format(date);
+            indexName = XContentMapValues.nodeStringValue(indexSettings.get(INDEX_NAME), riverName.name()) + "-" + customDateTime;
             typeName = XContentMapValues.nodeStringValue(indexSettings.get(MAPPING_TYPE), "status");
             bulkSize = XContentMapValues.nodeIntegerValue(indexSettings.get(BULK_SIZE), 100);
             concurrentRequests = XContentMapValues.nodeIntegerValue(indexSettings.get(CONCURRENT_REQUESTS), 1);

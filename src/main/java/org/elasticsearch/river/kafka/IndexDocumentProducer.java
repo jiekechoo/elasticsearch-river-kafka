@@ -60,7 +60,7 @@ public class IndexDocumentProducer extends ElasticSearchProducer {
                     message = XContentFactory.jsonBuilder()
                             .startObject()
                             .field("@timestamp", ts)
-                            .field("value", new String(messageBytes, "UTF-8"))
+                            .field("@message", new String(messageBytes, "UTF-8"))
                             .endObject()
                             .string();
                     request = Requests.indexRequest(riverConfig.getIndexName()).
